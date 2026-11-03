@@ -1,0 +1,102 @@
+Step 1: Create the topology
+1. Open Cisco Packet Tracer and create a new workspace.
+2. Add one Cisco 2911 router.
+3. Add two Cisco 2960 switches.
+4. Add four PCs.
+5. Connect the devices as follows:
+
+
+- PC0 and PC1 → Switch0.
+- PC2 and PC3 → Switch1.
+- Switch0 → Router GigabitEthernet 0/0.
+- Switch1 → Router GigabitEthernet 0/1.
+- Use Copper Straight-Through cables.
+
+
+Step 2: Configure IPv4 addresses
+
+Open each PC → Desktop → IP Configuration.
+Device	IPv4 Address	Subnet Mask	Default Gateway
+PC0	192.168.10.2	255.255.255.0	192.168.10.1
+PC1	192.168.10.3	255.255.255.0	192.168.10.1
+PC2	192.168.20.2	255.255.255.0	192.168.20.1
+PC3	192.168.20.3	255.255.255.0	192.168.20.1
+
+Step 3: Configure the router
+
+Click Router → CLI and enter:
+
+"enable
+configure terminal
+
+interface gigabitEthernet 0/0
+ip address 192.168.10.1 255.255.255.0
+no shutdown
+exit
+
+interface gigabitEthernet 0/1
+ip address 192.168.20.1 255.255.255.0
+no shutdown
+exit
+
+end
+write memory"
+
+
+Step 4: Configure IPv6 addresses
+
+Open each PC → Desktop → IP Configuration → IPv6 Configuration.
+Device	IPv6 Address	Prefix
+PC0	2001:DB8:10::2	/64
+PC1	2001:DB8:10::3	/64
+PC2	2001:DB8:20::2	/64
+PC3	2001:DB8:20::3	/64
+
+Configure the router:
+"enable
+configure terminal
+
+ipv6 unicast-routing
+
+interface gigabitEthernet 0/0
+ipv6 address 2001:DB8:10::1/64
+no shutdown
+exit
+
+interface gigabitEthernet 0/1
+ipv6 address 2001:DB8:20::1/64
+no shutdown
+exit
+
+end
+write memory"
+
+
+Set the IPv6 default gateways on the PCs to their respective router interface addresses:
+- PC0 and PC1: 2001:DB8:10::1
+- PC2 and PC3: 2001:DB8:20::1
+
+
+
+Step 5: Test connectivity
+
+On PC0 → Desktop → Command Prompt, enter:
+ping 192.168.10.3
+ping 192.168.20.2
+ping 192.168.20.3
+
+
+Test IPv6 connectivity:
+ping 2001:DB8:10::3
+ping 2001:DB8:20::2
+
+
+Successful replies indicate that communication is working.
+
+
+
+Step 6: Verify router configuration
+
+On the router CLI, enter:
+show ip interface brief
+show ipv6 interface brief

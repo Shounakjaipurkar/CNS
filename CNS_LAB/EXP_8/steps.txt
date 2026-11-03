@@ -1,0 +1,73 @@
+Step 2: Install the required Python library
+In Command Prompt, execute:
+pip install pycryptodome
+
+
+Wait until installation is completed.
+Step 3: Create a Python program
+1. Open IDLE or Visual Studio Code.
+2. Create a new Python file.
+3. Save it as:
+"banking_encryption.py"
+
+4. Copy the following program into the file.
+Step 4: Implement AES and RSA encryption
+Complete working Python program
+
+"""
+from Crypto.Cipher import AES, PKCS1_OAEP
+from Crypto.PublicKey import RSA
+from Crypto.Random import get_random_bytes
+
+# Original transaction
+message = "Transfer Rs.5000 to ABC Bank"
+
+print("Original Message:", message)
+
+# Generate RSA keys
+key = RSA.generate(2048)
+public_key = key.publickey()
+private_key = key
+
+# Generate AES key
+aes_key = get_random_bytes(16)
+
+# Encrypt message using AES
+aes = AES.new(aes_key, AES.MODE_EAX)
+ciphertext, tag = aes.encrypt_and_digest(message.encode())
+
+print("\nEncrypted Message:", ciphertext.hex())
+
+# Encrypt AES key using RSA
+rsa = PKCS1_OAEP.new(public_key)
+encrypted_key = rsa.encrypt(aes_key)
+
+print("\nAES Key Encrypted Using RSA")
+
+# Decrypt AES key using RSA
+rsa = PKCS1_OAEP.new(private_key)
+decrypted_key = rsa.decrypt(encrypted_key)
+
+# Decrypt message using AES
+aes = AES.new(decrypted_key, AES.MODE_EAX, nonce=aes.nonce)
+decrypted_message = aes.decrypt_and_verify(ciphertext, tag)
+
+print("\nDecrypted Message:", decrypted_message.decode())
+print("\nTransaction Verified Successfully!")
+
+"""
+
+
+Step 5: Execute the program
+ Execute:
+python banking_encryption.py
+
+
+Step 6: Observe the output
+Your output should show:
+1. Original banking transaction.
+2. AES encrypted transaction.
+3. RSA encrypted AES key.
+4. Successfully decrypted AES key.
+5. Recovered original transaction.
+6. Transaction verification successful.
